@@ -1,0 +1,62 @@
+<template>
+  <router-link :to="route" class="icon-link" >
+    <svg :class="{'active' : isActive}" width="38" height="38" viewBox="0 0 40 40" fill="#818183">
+      <path :d="path" />
+    </svg>
+    <div class="flying-text">
+      <p>{{menuName}}</p>
+    </div>
+  </router-link>
+</template>
+
+<script setup>
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  isActive: Boolean,
+  menuName: String,
+  active: {
+    type: String,
+    default: 'active',
+  },
+  route: {
+    type: [String, Object],
+    required: true,
+  },  
+  path: {
+    type: String,
+    required: true
+  }
+});
+</script>
+
+<style scoped>
+.icon-link {
+  @apply
+    relative justify-center items-center h-[40px] inline-flex
+}
+
+svg {
+  @apply 
+    hover:fill-[#2482E6] cursor-pointer transition-all ease-in-out
+}
+.flying-text {
+  @apply 
+    absolute w-auto py-2 px-8 ml-4 min-w-max left-12 rounded-md shadow-md
+    text-white bg-gray-900 
+    text-xs font-bold 
+    transition-all duration-200 scale-0 origin-left
+}
+
+svg:hover + .flying-text {
+  @apply 
+  scale-100
+}
+
+.active {
+  @apply fill-[#2482E6]
+}
+
+
+ 
+</style>
