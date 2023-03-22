@@ -4,7 +4,7 @@
 - Go to your specified directory
 - Clone the code
 ```
-git clone https://github.com/serpents22/idrolife_fe.git
+git clone https://github.com/serpents22/intellisense-devicesnet.git
 ```
 - Open code in VSCODE
 ```
@@ -32,27 +32,27 @@ npm run serve
 
 
 ## VPS Setup
-- Go to code directory ```cd dev/idrolife_fe```
+- Go to code directory ```cd dev/intellisense-devicesnet```
 - ``` git pull ```
 
 ### Remove Existing Container and Images
 this command below can be executed in any directory
 ```
-docker rm -f idrolife_fe
+docker rm -f intellisense-devicesnet
 ```
 
 ```
-docker rmi idrolife_fe:latest
+docker rmi intellisense-devicesnet:latest
 ```
 
 ### Create new Images and Run a Container
 execute this command inside code directory
 ```
-docker build -t idrolife_fe .
+docker build -t intellisense-devicesnet .
 ```
 
 ```
-docker run -p 8080:80 -d --name idrolife_fe idrolife_fe
+docker run -p 8080:80 -d --name intellisense-devicesnet intellisense-devicesnet
 ```
 
 
