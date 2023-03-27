@@ -6,7 +6,8 @@ import { ref } from 'vue'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: localStorage.getItem('auth.user'),
-    token: localStorage.getItem('auth.token'),
+    token: localStorage.getItem('auth.accessToken'),
+    refreshToken: localStorage.getItem('auth.refreshToken'),
     status: ref({
       state:null,
       message: null,
@@ -37,19 +38,21 @@ export const useAuthStore = defineStore('auth', {
       this.isLoading = true
       try {
         const res = await authAPI.signIn(data)
+        console.log(res)
         this.isLoading = false
-        this.token = res.data.data.token.token;
+        this.token = res.data.accessToken
+        this.refreshToken = res.data.refreshToken
         this.status.message = 'Login Successful'
         this.status.code = res.data.status
         this.status.state = false
-        localStorage.setItem('auth.token', res.data.data.token.token)
-        localStorage.setItem('auth.user', res.data.data.user.first_name)
-        router.push({ name: 'Dashboard' });
+        localStorage.setItem('auth.accessToken', res.data.accessToken)
+        localStorage.setItem('auth.refreshToken', res.data.refreshToken)
+        router.push({ name: 'DevicesList' });
       } catch (err) {
         console.error(err)
         this.isLoading = false
         this.status.state = true
-        this.status.code = err.response.status
+        this.status.code = err.response
 
         //define message 
         if (this.status.code == '400') {
@@ -91,7 +94,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         await authAPI.signOut()
         this.user = null;
-        localStorage.removeItem('auth.token');
+        localStorage.removeItem('auth.accessToken');
         localStorage.removeItem('auth.user')
         router.push({ name: 'LoginForm' });
       } catch (err) {

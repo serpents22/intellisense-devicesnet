@@ -8,19 +8,20 @@ export default {
     return apiClient.get('devices')
   },
 
-  getDevice(id) {
-    return apiClient.get(`devices/${id}`)
+  getDevice(imei) {
+    return apiClient.get(`devices/${imei}`) 
   },
 
-  postDevices(data) {
-    return apiClient.post('device', data)
-  },
   updateDevice(id,data) {
-    return apiClient.put(`device/${id}`, data)
+    return apiClient.patch(`devices/${id}`, data)
   },
 
   deleteDevice(id) {
-    return apiClient.delete(`device/${id}`)
+    return apiClient.delete(`devices/${id}`)
   },
 
+  createDevices(data) {
+    return apiClient.post('devices', data)
+  },
+  
 }

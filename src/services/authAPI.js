@@ -1,5 +1,5 @@
 import apiClient from "./API";
-
+ 
 const config = { 
   headers: {
     Accept: 'application/json'
@@ -8,7 +8,7 @@ const config = {
 
 export default {
   signIn(data) {
-    return apiClient.post('login',data,config)
+    return apiClient.post('auth/signin',data,config)
   },
   signUp(data) {
     return apiClient.post('register',data,config)

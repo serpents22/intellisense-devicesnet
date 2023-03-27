@@ -15,13 +15,13 @@
               <form  @submit="handleSubmit($event, onSubmit)" class="form-wrapper" >
                 <BaseInput name="deviceName" type="text" placeholder="What would you like to call this device" class="outlined" label="Device Name"/>
                 <BaseInput name="deviceType" type="text" placeholder="Categorize your device" class="outlined" label="Device Type"/>
-                <BaseInput name="imeiNumber" type="text" placeholder="Enter your device IMEI here" class="outlined" label="IMEI Number"/>
-                <BaseInput name="simNumber" type="number" placeholder="Enter your SIM number here" class="outlined" label="SIM Number"/>
-                <BaseInput name="simInfo" type="link" placeholder="Enter your SIM information here" class="outlined" label="SIM Information"/>
+                <BaseInput name="IMEINumber" type="text" placeholder="Enter your device IMEI here" class="outlined" label="IMEI Number"/>
+                <BaseInput name="SIMNumber" type="tel" placeholder="Enter your SIM number here" class="outlined" label="SIM Number"/>
+                <BaseInput name="SIMInfo" type="link" placeholder="Enter your SIM information here" class="outlined" label="SIM Information"/>
                 <TextArea name="notes" placeholder="Write notes for this device" class="outlined" label="Notes"></TextArea>
-                <div class="flex justify-between gap-10">
+                <div class="flex justify-between gap-10"> 
                   <BaseButton type="button" class="filled__softblue" :label="cancelLabel" @click="cancelForm"/>
-                  <BaseButton type="submit" class="filled__blue" :label="registerLabel" :loading="isLoading"  />
+                  <BaseButton type="submit" class="filled__blue" :label="registerLabel" :loading="createDeviceIsLoading"  />
                 </div>
               </form>
             </VeeForm>
@@ -42,7 +42,7 @@ import { Form as VeeForm } from 'vee-validate'
 import { addDeviceSchema } from '@/composable/devicesSchema'
 import { useDevicesStore } from '@/stores/DevicesStore'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { ref,onUnmounted } from 'vue'
 import { onClickOutside } from '@vueuse/core'
  
   const props = defineProps({
@@ -53,7 +53,7 @@ import { onClickOutside } from '@vueuse/core'
   const isError = ref(false)
   const modalActive = ref(false)
   const devicesStore = useDevicesStore()
-  const { status, isLoading } = storeToRefs(useDevicesStore())
+  const { status, createDeviceIsLoading } = storeToRefs(useDevicesStore())
   const cancelLabel = ref('CANCEL')
   const registerLabel = ref('REGISTER')
   const regButtonClick = ref(0)
@@ -69,8 +69,7 @@ import { onClickOutside } from '@vueuse/core'
     if (regButtonClick.value == 2) {
       await devicesStore.createDevices(values)
       modalActive.value = true
-
-      if (status.value.code == 'fail') {
+      if (status.value.state == true ) {
         isError.value = true
         setTimeout(closeNotification, 3000)
       } else {
@@ -80,9 +79,7 @@ import { onClickOutside } from '@vueuse/core'
       }
       registerLabel.value = 'REGISTER'
       regButtonClick.value = 0
-      delay(300)
-      devicesList.value = deviceStore.loadDevices()
-
+      devicesStore.loadDevices()
     }
   }
 
@@ -115,6 +112,10 @@ import { onClickOutside } from '@vueuse/core'
         break;
     }
   }
+
+  // onUnmounted(() => {
+  //   devicesStore.loadDevices()
+  // })
 
 
 </script>

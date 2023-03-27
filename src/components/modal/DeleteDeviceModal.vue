@@ -13,12 +13,12 @@
               <div class="flex flex-col gap-4">
                 <h1 class="text-lg">Please verify the device before deleting it</h1>
                 <div class="flex flex-col gap-2">
-                  <h1 class="font-semibold">NAME: {{ props.deviceInfo.name }}</h1>
-                  <h1 class="font-semibold">IMEI: {{ props.deviceInfo.imei }}</h1>
+                  <h1 class="font-semibold">NAME: {{ props.deviceInfo.deviceName }}</h1>
+                  <h1 class="font-semibold">IMEI: {{ props.deviceInfo.IMEINumber }}</h1>
                 </div>
               </div>
               <div class="button-wrapper">
-                <BaseButton type="button" class="filled__red" :label="delLabel" :loading="isLoading" @click="onSubmit(props.deviceInfo.imei)" />
+                <BaseButton type="button" class="filled__red" :label="delLabel" :loading="isLoading" @click="onSubmit(props.deviceInfo.id)" />
                 <BaseButton type="button" class="filled__softblue" label="CANCEL" @click="closeModal" />
               </div>
           </div>
@@ -47,7 +47,6 @@ import { onClickOutside } from '@vueuse/core'
   const { status, isLoading } = storeToRefs(useDevicesStore())
   const delLabel = ref('DELETE')
   const delButtonClick = ref(0)
-  const delay = (time) => new Promise((resolve) => setTimeout(resolve, time))
 
   const onSubmit = async (id) => {
     delButtonClick.value = ++delButtonClick.value
@@ -66,10 +65,8 @@ import { onClickOutside } from '@vueuse/core'
         isError.value = false
         setTimeout(closeNotification, 3000)
       }
-      resetButton()
+      devicesStore.loadDevices()
       closeModal()
-      delay(300)
-      devicesList.value = deviceStore.loadDevices()
     }
   }
 
@@ -80,8 +77,9 @@ import { onClickOutside } from '@vueuse/core'
   const emits = defineEmits(['close'])
   
   function closeModal() {
-    resetButton()
     emits('close')
+    delLabel.value = 'DELETE'
+    delButtonClick.value = 0
   }
   const target = ref(null)
 
@@ -91,11 +89,6 @@ import { onClickOutside } from '@vueuse/core'
       closeModal()
     }
   })
-
-  function resetButton() {
-    delLabel.value = 'DELETE'
-    delButtonClick.value = 0
-  }
 
 
 </script>

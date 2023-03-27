@@ -4,15 +4,15 @@
     <div class="field-wrapper flex flex-col gap-3 sm:gap-6">
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">Device Name:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.name }}</p>
+        <p class="text-[#353535] text-base">{{ deviceData.deviceName }}</p>
       </div>
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">Device Type:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.name }}</p>
+        <p class="text-[#353535] text-base">{{ deviceData.deviceType }}</p>
       </div>
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">IMEI Number:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.imei }}</p>
+        <p class="text-[#353535] text-base">{{ deviceData.IMEINumber }}</p>
       </div>
     </div>
     <div class="field-wrapper flex flex-col gap-3 sm:gap-6">
@@ -35,18 +35,18 @@
     <div class="field-wrapper flex flex-col gap-3 sm:gap-6">
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">SIM Number:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.name }}</p>
+        <p class="text-[#353535] text-base">{{ deviceData.SIMNumber }}</p>
       </div>
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">SIM Information:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.name }}</p>
+        <p class="text-[#353535] text-base">{{ deviceData.SIMInfo }}</p>
       </div>
     </div>
   </div>
-  <div class="device-notes bg-[#F7F7F7] rounded-lg h-[280px] w-[300px] sm:w-[480px] py-5 px-10">
+  <div class="device-notes bg-[#F7F7F7] rounded-lg h-[280px] w-[300px] sm:w-[1000px] py-5 px-10">
     <div class="text-wrapper flex flex-col gap-2 text-left">
       <p class="text-[#353535]/60 text-sm">Notes:</p>
-      <p class="text-[#353535] text-base">{{ deviceData.name }}</p>
+      <p class="text-[#353535] text-base">{{ deviceData.notes }}</p>
     </div>
   </div>
 </div>
@@ -88,7 +88,7 @@ import { onBeforeMount } from 'vue';
     
   <style scoped>
 .content {
-  @apply w-full h-fit px-5 py-[32px] ml-[60px] pt-[46px]
+  @apply w-full h-fit px-5 py-[32px] pt-[46px]
 }
   .title {
     @apply

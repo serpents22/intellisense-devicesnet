@@ -4,8 +4,8 @@ export const addDeviceSchema = yup.object({
 
   deviceName: yup.string().required().label('Device Name'),
   deviceType: yup.string().required().label('Device Type'),
-  imeiNumber: yup.string().required().label('IMEI Number'),
-  simNumber: yup.number().required().label('SIM Number'),
+  IMEINumber: yup.string().required().label('IMEI Number'),
+  SIMNumber: yup.number().required().label('SIM Number'),
   // simInfo: yup.string().label('Type')
   // notes: yup.string().required().label('Coordinate'),
 });
@@ -13,6 +13,5 @@ export const addDeviceSchema = yup.object({
 export const updateDeviceSchema = yup.object({
   deviceName: yup.string().required().label('Device Name'),
   deviceType: yup.string().required().label('Device Type'),
-  imeiNumber: yup.string().required().label('IMEI Number'),
-  simNumber: yup.number().required().label('SIM Number'),
+  SIMNumber: yup.number().required().label('SIM Number'),
 }); 

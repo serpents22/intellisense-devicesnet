@@ -32,6 +32,7 @@ export default {
   color: #2c3e50;
   height: 100vh;
   display: flex;
+  padding: 60px 20px 60px 60px;
 }
 
 body {

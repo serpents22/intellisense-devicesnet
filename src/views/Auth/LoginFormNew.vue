@@ -1,5 +1,4 @@
 <template>
-  <!-- <loading :loading="isLoading" /> -->
   <alert 
     :message ="status.message"
     :modalActive="modalActive"
@@ -12,13 +11,13 @@
       <h1 class="service-name">Login</h1>
       <VeeForm :validation-schema="schema" v-slot="{ handleSubmit }" as="div" class="w-full" >
         <form  @submit="handleSubmit($event, onSubmit)" class="form-wrapper" >
-            <BaseInput name="email" type="text" placeholder="you@email.com" class="outlined" label="Email"/>
+            <BaseInput name="username" type="text" placeholder="you@email.com" class="outlined" label="Email"/>
             <BaseInput name="password" type="password" placeholder="notyourbirthday" class="outlined" label="Password"/>
             <MyButton type="submit" class="filled__blue" label="Login" :loading="isLoading" />
         </form>
       </VeeForm>
       <div class="create-account">
-        <!-- <router-link :to="{name: 'ResetPassword'}"> Forgot Password? </router-link> -->
+        <router-link :to="{name: 'ResetPassword'}"> Forgot Password? </router-link>
       </div>
     </div>
     <div class="w-[662px] bg-cover bg-[url('@/assets/img/login-bg.png')] bg-center flex justify-center items-center">
@@ -28,7 +27,6 @@
         <p class="text-base font-light">Manage and monitor your IoT Devices</p>
       </div>
     </div>
-    <!-- <img src="@/assets/img/login-bg.png" alt="" >  -->
   </div>
 </template>
 
@@ -40,6 +38,7 @@
   import { ref } from 'vue'
   import { storeToRefs } from 'pinia'
   import { loginSchema } from '@/composable/validationSchemas'
+import router from '@/router'
 
   const schema = loginSchema
  

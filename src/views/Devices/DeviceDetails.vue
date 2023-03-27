@@ -1,6 +1,6 @@
 <template>
 <alert 
-  message ="test"
+  :message ="status.message"
   :modalActive="modalActive"
   :isError="isError"
   @close="closeNotification" />
@@ -12,7 +12,7 @@
       <Button type="button" class="filled__blue" :label="editLabel" @click="editAction" />
     </div>
   </div>
-  <component :is="selectedComponent" :id="deviceId" @updated="updated" />
+  <component :is="selectedComponent" :id="deviceId" :imei="deviceImei" @updated="updated" />
   <div class="table-wrap">
     <EasyDataTable
     table-class-name="customize-table"
@@ -44,8 +44,8 @@ import { onBeforeMount, ref } from 'vue';
       const deviceId = props.id
       const header = [
         { text: "", value: "indicator", width: 40},
-        { text: "IMEI", value: "imei" },
-        { text: "Device Name", value: "name", sortable: true },
+        { text: "IMEI", value: "IMEINumber" },
+        { text: "Device Name", value: "deviceName", sortable: true },
         { text: "Status", value: "status", sortable: true },
         { text: "IP Address", value: "ipAddress", sortable: true },
         { text: "Port", value: "port", sortable: true },
@@ -54,7 +54,7 @@ import { onBeforeMount, ref } from 'vue';
       ]
 
       const devicesStore = useDevicesStore()
-      const { deviceData,status, isLoading, } = storeToRefs(useDevicesStore())
+      const { deviceData, status } = storeToRefs(useDevicesStore())
       const selectedComponent = ref('DeviceInfo')
       
       onBeforeMount( async () => {
@@ -113,16 +113,16 @@ import { onBeforeMount, ref } from 'vue';
       const modalActive = ref(false)
 
       function updated() {
-        if (status.value.code == 'fail') {
+        if (status.value.state == true ) {
           isError.value = true
           setTimeout(closeNotification, 3000)
         } else {
+          selectedComponent.value = 'DeviceInfo'
           isError.value = false
           setTimeout(closeNotification, 3000)
         }
         modalActive.value = true
         editLabel.value = 'Edit Information'
-        selectedComponent.value = 'DeviceInfo'
         editClick.value = 0
         cancelButtonClick.value = 0
       }
@@ -130,7 +130,7 @@ import { onBeforeMount, ref } from 'vue';
         modalActive.value = false
       }
       return {
-        selectedComponent, devicesStore, deviceData, deviceId, header, editAction, editLabel, updated, modalActive, isError
+        selectedComponent, devicesStore, deviceData, deviceId, header, editAction, editLabel, updated, modalActive, isError, closeNotification, status
       }
     }
   }
@@ -139,7 +139,7 @@ import { onBeforeMount, ref } from 'vue';
     
   <style scoped>
 .content {
-  @apply w-full h-fit px-5 py-[32px] ml-[60px] pt-[46px]
+  @apply w-full h-fit px-5 py-[32px] pt-[46px]
 }
   .title {
     @apply

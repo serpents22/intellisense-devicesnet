@@ -70,12 +70,12 @@ button {
   
 }
 .outlined {
-  @apply border-solid border-2 border-[#FFEE58] rounded-md p-2 cursor-pointer text-sm font-medium justify-center items-center text-center
-  transition-colors duration-300 text-[#FFEE58] box-border
+  @apply border-solid border-2 border-[#2482E6] rounded-md p-2 cursor-pointer text-sm font-medium justify-center items-center text-center
+  transition-colors duration-300 text-[#2482E6] box-border
 }
 
 .outlined:hover {
-  @apply bg-[#FFEE58] text-[#353535]
+  @apply bg-[#2482E6] text-white
 }
 
 .floating {
