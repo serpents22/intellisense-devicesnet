@@ -7,12 +7,17 @@
 <sideNav :isDevicesActive="true" />
 <div class="content">
   <div class="content-header">
-    <h1 class="title"> Device Information </h1>
+    <div class="title-wrapper flex gap-6 items-center">
+      <div class="button-wrapper">
+        <Button type="button" class="outlined" label="Back" @click="goBack" />
+      </div>
+      <h1 class="title"> Device Information </h1>
+    </div>
     <div class="button-wrapper">
       <Button type="button" class="filled__blue" :label="editLabel" @click="editAction" />
     </div>
-  </div>
-  <component :is="selectedComponent" :id="deviceId" :imei="deviceImei" @updated="updated" />
+  </div> 
+  <component :is="selectedComponent" :id="deviceId" @updated="updated" />
   <div class="table-wrap">
     <EasyDataTable
     table-class-name="customize-table"
@@ -22,6 +27,7 @@
     />
   </div>
 </div>
+
 </template> 
      
 <script>
@@ -31,10 +37,14 @@ import sideNav from '@/components/navigation/sideNav.vue'
 import Button from '@/components/button/BaseButton.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import { useDevicesStore } from '@/stores/DevicesStore'
+import { useDataStore } from '@/stores/DataStore'
+import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref } from 'vue'
+import router from '@/router'
 
   export default {
+    
     components: {
       DeviceInfo, EditDevice, sideNav, Button, SearchBar
     },
@@ -43,9 +53,8 @@ import { onBeforeMount, ref } from 'vue';
     setup(props) {
       const deviceId = props.id
       const header = [
-        { text: "", value: "indicator", width: 40},
-        { text: "IMEI", value: "IMEINumber" },
-        { text: "Device Name", value: "deviceName", sortable: true },
+        { text: "Timestamp", value: "IMEINumber" },
+        { text: "IMEI", value: "deviceName", sortable: true },
         { text: "Status", value: "status", sortable: true },
         { text: "IP Address", value: "ipAddress", sortable: true },
         { text: "Port", value: "port", sortable: true },
@@ -55,24 +64,26 @@ import { onBeforeMount, ref } from 'vue';
 
       const devicesStore = useDevicesStore()
       const { deviceData, status } = storeToRefs(useDevicesStore())
+      const dataStore = useDataStore()
+      const { historicalData } = storeToRefs(useDataStore()) 
       const selectedComponent = ref('DeviceInfo')
-      
-      onBeforeMount( async () => {
-        await devicesStore.loadDevice(props.id)
-        console.log(deviceData.value)
-          switch (deviceData.value.status) {
-            case 0:
-              deviceData.value.status = 'Offline'
-              deviceData.value.indicator = 0
-            break;
-            case 1:
-              deviceData.value.status = 'Online'
-              deviceData.value.indicator = 1
-            break;
-            default:
-              break;
-          }
+            
+      const historicalParams = ref({
+        imei: props.id,
+        startTime: '2023-04-03T04:40:44.904Z',
+        endTime: '2023-04-03T04:48:44.904Z',
+        avlId: '66',
+        enableDecode: false,
+        maskingBit: '65536',
+        dataId: '65536'
       })
+
+      const getHistoryData = async () => {
+        await dataStore.getHistoricalData(historicalParams.value)
+        console.log(historicalData.value)
+      }
+
+
 
       const editLabel = ref('Edit Information')
       const editClick = ref(0)
@@ -129,8 +140,13 @@ import { onBeforeMount, ref } from 'vue';
       const closeNotification = () => {
         modalActive.value = false
       }
+      const goBack = () => {
+        router.go(-1);
+      }
+
+      
       return {
-        selectedComponent, devicesStore, deviceData, deviceId, header, editAction, editLabel, updated, modalActive, isError, closeNotification, status
+        selectedComponent, devicesStore, deviceData, deviceId, header, editAction, editLabel, updated, modalActive, isError, closeNotification, status, goBack
       }
     }
   }
@@ -152,7 +168,7 @@ import { onBeforeMount, ref } from 'vue';
   }
   .content-header {
     @apply
-    flex flex-row w-full justify-between mb-[30px]
+    flex flex-row w-full justify-between mb-[30px] items-center
   }
   
   .customize-table {

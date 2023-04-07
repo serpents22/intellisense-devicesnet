@@ -27,7 +27,7 @@ import { useDevicesStore } from '@/stores/DevicesStore'
 import { storeToRefs } from 'pinia'
 import { Form as VeeForm } from 'vee-validate'
 import { updateDeviceSchema } from '@/composable/devicesSchema'
-import { onBeforeMount, ref } from 'vue';
+import { ref } from 'vue';
 import BaseInput from '@/components/input/BaseInput.vue'
 import TextArea from '@/components/input/TextArea.vue'
 import BaseButton from '@/components/button/BaseButton.vue' 
@@ -38,23 +38,7 @@ import BaseButton from '@/components/button/BaseButton.vue'
   const schema = updateDeviceSchema
   const devicesStore = useDevicesStore()
   const { updateDeviceIsLoading, deviceData } = storeToRefs(useDevicesStore())
-  
-  onBeforeMount( async () => {
-    await devicesStore.loadDevice(props.id)
-    console.log(deviceData.value)
-      switch (deviceData.value.status) {
-        case 0:
-          deviceData.value.status = 'Offline'
-          deviceData.value.indicator = 0
-        break;
-        case 1:
-          deviceData.value.status = 'Online'
-          deviceData.value.indicator = 1
-        break;
-        default:
-          break;
-      }
-  })
+
   
   const updateLabel = ref('UPDATE')
   const updateButtonClick = ref(0)

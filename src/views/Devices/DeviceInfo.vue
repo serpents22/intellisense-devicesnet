@@ -4,49 +4,53 @@
     <div class="field-wrapper flex flex-col gap-3 sm:gap-6">
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">Device Name:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.deviceName }}</p>
+        <p class="text-[#353535] text-base">{{ mergedData.deviceName }}</p>
       </div>
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">Device Type:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.deviceType }}</p>
+        <p class="text-[#353535] text-base">{{ mergedData.deviceType }}</p>
       </div>
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">IMEI Number:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.IMEINumber }}</p>
+        <p class="text-[#353535] text-base">{{ mergedData.IMEINumber }}</p>
       </div>
     </div>
     <div class="field-wrapper flex flex-col gap-3 sm:gap-6">
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">Status:</p>
         <div class="flex items-center gap-3">
-          <Indicator :status="deviceData.indicator"/>
-          <p class="text-[#353535] text-base">{{ deviceData.status }}</p>
+          <Indicator :status="mergedData.indicator"/>
+          <p class="text-[#353535] text-base">{{ mergedData.status }}</p>
         </div>
       </div>
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">IP Address:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.ipAddress }}</p>
+        <p class="text-[#353535] text-base">{{ mergedData.IPAddress }}</p>
       </div>
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">Port:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.port }}</p>
+        <p class="text-[#353535] text-base">{{ mergedData.port }}</p>
       </div>
     </div>
     <div class="field-wrapper flex flex-col gap-3 sm:gap-6">
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">SIM Number:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.SIMNumber }}</p>
+        <p class="text-[#353535] text-base">{{ mergedData.SIMNumber }}</p>
       </div>
       <div class="text-wrapper flex flex-col gap-2 text-left">
         <p class="text-[#353535]/60 text-sm">SIM Information:</p>
-        <p class="text-[#353535] text-base">{{ deviceData.SIMInfo }}</p>
+        <p class="text-[#353535] text-base">{{ mergedData.SIMInfo }}</p>
+      </div>
+      <div class="text-wrapper flex flex-col gap-2 text-left">
+        <p class="text-[#353535]/60 text-sm">Last Handshake:</p>
+        <p class="text-[#353535] text-base">{{ mergedData.lastHandshake }}</p>
       </div>
     </div>
   </div>
   <div class="device-notes bg-[#F7F7F7] rounded-lg h-[280px] w-[300px] sm:w-[1000px] py-5 px-10">
     <div class="text-wrapper flex flex-col gap-2 text-left">
       <p class="text-[#353535]/60 text-sm">Notes:</p>
-      <p class="text-[#353535] text-base">{{ deviceData.notes }}</p>
+      <p class="text-[#353535] text-base">{{ mergedData.notes }}</p>
     </div>
   </div>
 </div>
@@ -55,33 +59,38 @@
 <script setup>
 
 import Indicator from '@/components/Indicator.vue'
-import { useDevicesStore } from '@/stores/DevicesStore'
+import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
-import { onBeforeMount } from 'vue';
+import { useDevicesStore } from '@/stores/DevicesStore'
+import { ref, onUnmounted, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
-  const props = defineProps({
-    id: String
-  })
+  const route = useRoute()
   
+  const realtimeDataStore = useRealtimeDataStore()
+  const { deviceStatus } = storeToRefs(useRealtimeDataStore())
   const devicesStore = useDevicesStore()
   const { deviceData } = storeToRefs(useDevicesStore())
 
-  onBeforeMount( async () => {
-    await devicesStore.loadDevice(props.id)
-    console.log(deviceData.value)
-      switch (deviceData.value.status) {
-        case 0:
-          deviceData.value.status = 'Offline'
-          deviceData.value.indicator = 0
-        break;
-        case 1:
-          deviceData.value.status = 'Online'
-          deviceData.value.indicator = 1
-        break;
-        default:
-          break;
-      }
+  const mergedData = ref({})
+
+  async function getDevicesList() {
+    await devicesStore.loadDevice(route.params.id)
+    await realtimeDataStore.getDeviceStatus(route.params.id)
+    mergedData.value = Object.assign({}, deviceData.value, deviceStatus.value);
+    console.log(mergedData.value)
+  }
+
+  const getDevicesInterval = setInterval(getDevicesList,5000)
+    
+  onMounted( async () => {
+    getDevicesList()
   })
+
+  onUnmounted( async () => {
+    clearInterval(getDevicesInterval)
+  })
+
 
   
 </script>

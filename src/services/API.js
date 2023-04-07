@@ -52,7 +52,7 @@ apiClient.interceptors.response.use(
         // You could also redirect the user to the login page here
         console.log('Error refreshing auth token', error);
         localStorage.clear('auth.accessToken')
-        router.push({ name: 'LoginForm' })
+        router.push({ name: 'Login Page' })
         return Promise.reject(error);
       }
     }

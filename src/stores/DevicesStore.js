@@ -19,8 +19,8 @@ export const useDevicesStore = defineStore('device', () => {
     isLoading.value = true
     try {
       const res = await devicesApi.getDevices()
-      console.log(res)
       devicesList.value = res.data
+      console.log(devicesList.value)
       isLoading.value = false
     } catch (err) {
         console.error(err)

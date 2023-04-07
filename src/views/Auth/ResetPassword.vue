@@ -8,7 +8,7 @@
   <div class="content">
     <div class="form-wrapper">
       <div class="w-[120px] mb-10">
-        <router-link :to="{name: 'LoginForm'}"> 
+        <router-link :to="{name: 'Login Page'}"> 
           <MyButton class="outlined" label="back to login" @click="route" />
         </router-link>
       </div>
@@ -59,7 +59,7 @@ import router from '@/router'
       setTimeout(closeNotification, 5000)
       resetForm()
     }
-    router.push({name:'DevicesList'})
+    router.push({name:'Devices List'})
   }
 
   const closeNotification = () => {

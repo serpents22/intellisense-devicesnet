@@ -47,16 +47,16 @@ export const useAuthStore = defineStore('auth', {
         this.status.state = false
         localStorage.setItem('auth.accessToken', res.data.accessToken)
         localStorage.setItem('auth.refreshToken', res.data.refreshToken)
-        router.push({ name: 'DevicesList' });
+        router.push({ name: 'Dashboard' });
       } catch (err) {
         console.error(err)
         this.isLoading = false
         this.status.state = true
-        this.status.code = err.response
+        this.status.code = err.response.data.statusCode
 
         //define message 
         if (this.status.code == '400') {
-          this.status.message = "Oops! It looks like your request wasn't quite right. Please check your input and try again."
+          this.status.message = err.response.data.message
         } 
         if (this.status.code == '401') {
           this.status.message = "Hold on! You need to be logged in to access that page. Please log in or sign up to continue."
@@ -77,13 +77,7 @@ export const useAuthStore = defineStore('auth', {
           this.status.message = "Hold tight! We're performing maintenance on our servers. Please try again later."
         }
 
-
-        if (err.response.data.error == 'E_ROW_NOT_FOUND: Row not found') {
-          this.status.message = 'Email not Registered'
-        } else if (err.response.data.error == 'E_INVALID_AUTH_PASSWORD: Password mis-match') {
-          this.status.message = 'Password missmatch'
-        }
-        this.status.code = err.response.data.status
+        console.log(this.status)
 
 
         return err
@@ -91,17 +85,9 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async signOut() {
-      try {
-        await authAPI.signOut()
-        this.user = null;
-        localStorage.removeItem('auth.accessToken');
-        localStorage.removeItem('auth.user')
-        router.push({ name: 'LoginForm' });
-      } catch (err) {
-        console.error(err)
-        return err
-      }
-
+      localStorage.removeItem('auth.accessToken');
+      localStorage.removeItem('auth.user')
+      router.push({ name: 'Login Page' });
     },
 
     async forgotPassword(data) {

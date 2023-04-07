@@ -17,8 +17,7 @@ import Vue3EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
 
 import JsonCSV from 'vue-json-csv'
-
-
+import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs.vue';
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -35,6 +34,7 @@ app.component('alert', defineAsyncComponent(() =>
 
 app
 .component('EasyDataTable', Vue3EasyDataTable)
+.component('Breadcrumbs', Breadcrumbs)
 .component('modal', modal)
 .component('lottie', lottie)
 .component('loading', loading)

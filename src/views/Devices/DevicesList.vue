@@ -23,8 +23,9 @@
       </div>
       <EasyDataTable
       table-class-name="customize-table"
+      :loading="loading"
       :headers="header"
-      :items="devicesList"
+      :items="mergedList"
       theme-color="#1363df"        
       :search-value="searchValue"
       >
@@ -56,10 +57,12 @@ import NewDeviceModal from '@/components/modal/NewDeviceModal.vue';
 import DeleteDeviceModal from '@/components/modal/DeleteDeviceModal.vue'; 
 import SearchBar from '@/components/SearchBar.vue'
 import Button from '@/components/button/BaseButton.vue'
-import { onBeforeMount, ref} from 'vue';
+import { onBeforeMount, onUnmounted, ref} from 'vue';
 import router from '@/router'
 import { useDevicesStore } from '@/stores/DevicesStore'
+import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
+import { computed } from '@vue/reactivity';
 
   const isModalPops = ref(false)
   const isDelModalPops = ref(false)
@@ -70,35 +73,43 @@ import { storeToRefs } from 'pinia'
     { text: "IMEI", value: "IMEINumber" },
     { text: "Device Name", value: "deviceName", sortable: true },
     { text: "Status", value: "status", sortable: true },
-    { text: "IP Address", value: "ipAddress", sortable: true },
+    { text: "IP Address", value: "IPAddress", sortable: true },
     { text: "Port", value: "port" },
     { text: "Last Handshake", value: "lastHandshake", sortable: true },
     { text: "", value: "operation", width: 100 },
   ]
 
   const devicesStore = useDevicesStore()
+  const realtimeDataStore = useRealtimeDataStore()
   const { devicesList } = storeToRefs(useDevicesStore())
-  onBeforeMount( async () => {
+  const { devicesStatus } = storeToRefs(useRealtimeDataStore())
+  const mergedList = ref([])
+  const loading = ref(false)
+ 
+  async function getDevicesList() {
     await devicesStore.loadDevices()
-    console.log(devicesList)
-    devicesList.value.map((data) => {
-      switch (data.status) {
-        case 0:
-          data.status = 'Offline'
-          data.indicator = 0
-        break;
-        case 1:
-          data.status = 'Online'
-          data.indicator = 1
-        break;
-        default:
-          break;
-      }
+    await realtimeDataStore.getDevicesStatus()
+    const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-"}
+    mergedList.value = devicesList.value.map(device => {
+      const tcpStatusData = devicesStatus.value.find(status => status.imei === device.IMEINumber) || defaultValue
+      return { ...device, ...tcpStatusData }
     })
+    console.log(mergedList.value)
+  }
+ 
+  onBeforeMount( async () => {
+    loading.value = true
+    await getDevicesList()
+    loading.value = false
   })
 
+  const getDevicesInterval = setInterval(getDevicesList,5000)
+
+  onUnmounted(() => {
+    clearInterval(getDevicesInterval)
+  })
   function gotoDetail(data){
-    router.push({ name: 'DeviceDetails', params: { id: data }})
+    router.push({ name: 'Device Details', params: { id: data }})
   }
   function modalToggle() {
     isModalPops.value = !isModalPops.value
@@ -119,15 +130,15 @@ import { storeToRefs } from 'pinia'
 }
 .device-container {
   @apply 
-    pl-5 pb-[32px] pt-[46px]
+    pl-[32px] pb-[32px] pt-[32px]
 }
 .title {
   @apply
-    text-[28px] font-normal flex justify-start items-center text-[#353535] opacity-80
+    text-[28px] font-thin flex justify-start items-center text-[#353535] opacity-80
 }
 .table-wrap {
   @apply
-    h-[300px] py-[15px] mt-[5px]
+    py-[15px] mt-[5px]
     overflow-auto sm:overflow-visible
 }
 .table-header {

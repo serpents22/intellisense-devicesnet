@@ -1,6 +1,6 @@
 <template>
-  <router-link :to="route" class="icon-link" >
-    <svg :class="{'active' : isActive}" width="38" height="38" viewBox="0 0 40 40" fill="#818183">
+  <router-link :class="{'active' : isActive}" :to="route" class="icon-link"  >
+    <svg width="38" height="38" viewBox="0 0 40 40" fill="#818183">
       <path :d="path" />
     </svg>
     <div class="flying-text">
@@ -33,7 +33,7 @@ const props = defineProps({
 <style scoped>
 .icon-link {
   @apply
-    relative justify-center items-center h-[40px] inline-flex
+    relative justify-center items-center inline-flex w-full 
 }
 
 svg {
@@ -53,9 +53,15 @@ svg:hover + .flying-text {
   scale-100
 }
 
-.active {
+.active svg {
   @apply fill-[#2482E6]
 }
+
+.active {
+  @apply border-r-2 border-[#509BEB] 
+}
+
+
 
 
  

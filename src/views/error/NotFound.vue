@@ -18,6 +18,6 @@ import BaseButton from '@/components/button/BaseButton.vue'
 import router from '@/router';
   
   function goHome() {
-    router.push({ name: 'LoginForm' });
+    router.push({ name: 'Login Page' });
   }
 </script>
