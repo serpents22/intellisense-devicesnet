@@ -18,14 +18,14 @@
     </div>
   </div> 
   <component :is="selectedComponent" :id="deviceId" @updated="updated" />
-  <div class="table-wrap">
+  <!-- <div class="table-wrap">
     <EasyDataTable
     table-class-name="customize-table"
     :headers="header"
     :items="[deviceData]"
     theme-color="#1363df"        
     />
-  </div>
+  </div> -->
 </div>
 
 </template> 

@@ -5,7 +5,8 @@
       <div class="device-container">
         <h1 class="title"> Dashboard </h1>
         <div class="card-wrapper">
-          <div v-for="device in mergedList" :key="device.id" class="card">
+          <lazyCard v-if="loading" v-for="card in 4" />
+          <div v-for="device in mergedList" :key="device.id" class="card" @click="router.push({ name: 'Dashboard Details', params: { id: device.IMEINumber }})">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-4">
                 <Indicator :status="device.indicator"/>
@@ -29,6 +30,7 @@
 </template>
   
 <script setup>
+import lazyCard from '@/components/loading/lazyCard.vue';
 import Indicator from '@/components/Indicator.vue'
 import sideNav from '@/components/navigation/sideNav.vue'
 import Button from '@/components/button/BaseButton.vue'
@@ -36,6 +38,7 @@ import { onBeforeMount, ref, onUnmounted } from 'vue';
 import { useDevicesStore } from '@/stores/DevicesStore'
 import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
+import router from '@/router';
  
 
   const devicesStore = useDevicesStore()
@@ -82,7 +85,7 @@ import { storeToRefs } from 'pinia'
 }
 .device-container {
   @apply 
-    pl-[32px] pb-[32px] flex flex-col gap-4 pt-[32px]
+    pl-[32px] pb-[32px] flex flex-col gap-9 pt-[32px]
 }
 .title {
   @apply

@@ -4,6 +4,7 @@ import { useLoadingStore } from '@/stores/LoadingStore'
 import LoginForm from '@/views/Auth/LoginFormNew.vue'
 import DevicesList from '@/views/Devices/DevicesList.vue'
 import Dashboard from '@/views/Dashboard/Dashboard.vue'
+import DashboardDetails from '@/views/Dashboard/DashboardDetails.vue'
 import DeviceDetails from '@/views/Devices/DeviceDetails.vue'
 import ResetPassword from '@/views/Auth/ResetPassword.vue'
 import NotFound from '@/views/error/NotFound.vue'
@@ -11,10 +12,11 @@ import NotFound from '@/views/error/NotFound.vue'
 const routes = [
   { path: '/', name: 'Login Page', component: LoginForm, meta: { requiresAuth:false, title: 'Intellisense DevicesNet - Login',  } },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPassword, meta: { requiresAuth:false} },
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth:true }, props: { useLayout: true } },
+  { path: '/dashboard', name: 'Dashboard', component: Dashboard, meta: { requiresAuth:true }},
+  { path: '/dashboard/details/:id', name: 'Dashboard Details', component: DashboardDetails,props: true, meta: { requiresAuth:true }},
   
-  { path: '/devices', name: 'Devices List', component: DevicesList, meta: { requiresAuth:true }, props: { useLayout: true } },
-  { path: '/devices/device-info/:id', name: 'Device Details', component: DeviceDetails, props: true, meta: { requiresAuth:true }},
+  { path: '/devices', name: 'Devices List', component: DevicesList, meta: { requiresAuth:true }},
+  { path: '/devices/details/:id', name: 'Device Details', component: DeviceDetails, props: true, meta: { requiresAuth:true }},
 
   { path: '/:catchALL(.*)', name: 'NotFound', component: NotFound },
 ]
