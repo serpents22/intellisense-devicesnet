@@ -23,36 +23,33 @@
 import Indicator from '@/components/Indicator.vue'
 import sideNav from '@/components/navigation/sideNav.vue'
 import Button from '@/components/button/BaseButton.vue'
-import { onBeforeMount, ref, onUnmounted, watch } from 'vue';
+import { ref, onUnmounted, watch } from 'vue';
 import { useCANDataStore } from '@/stores/CANDataStore'
-import { useRoute } from 'vue-router';
 import { debounce } from 'lodash';
 
+const props = defineProps({
+   id: {
+     type: String,
+     required: true
+   }
+ });
  const canDataStore = useCANDataStore()
-
- const route = useRoute()
  const dataID = ref()
  const getCANDataInterval = ref(null)
   
-function getCANData() {
-  canDataStore.getCANData(route.params.id,145,dataID.value)
-}
 
-// onBeforeMount(() => {
-//   canDataStore.getCANData(route.params.id,145,dataID.value)
-//   console.log(canDataStore.CANData.dataValue)
-// })
+function getCANData() {
+  canDataStore.getCANData(props.id,145,dataID.value)
+}
 
 watch(dataID, debounce((newValue) => {
   console.log(newValue)
   if (newValue != '') {
     getCANData()
-    console.log('filled')
     if (getCANDataInterval.value === null) {
       getCANDataInterval.value = setInterval(getCANData, 5000)
     }
   } else if (newValue === '') {
-    console.log('empty')
     clearInterval(getCANDataInterval.value)
     getCANDataInterval.value = null
   }

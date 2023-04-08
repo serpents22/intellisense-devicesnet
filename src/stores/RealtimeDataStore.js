@@ -6,7 +6,7 @@ import 'dayjs/locale/en'; // Load the English locale
 
 dayjs.locale('en'); // Set the locale to English
 
-export const useRealtimeDataStore = defineStore('data', () => {
+export const useRealtimeDataStore = defineStore('realtimedata', () => {
   
   const devicesStatus = ref([null])
   const deviceStatus = ref()

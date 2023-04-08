@@ -75,8 +75,8 @@ import { useRoute } from 'vue-router';
   const mergedData = ref({})
 
   async function getDevicesList() {
-    await devicesStore.loadDevice(route.params.id)
     await realtimeDataStore.getDeviceStatus(route.params.id)
+    await devicesStore.loadDevice(route.params.id)
     mergedData.value = Object.assign({}, deviceData.value, deviceStatus.value);
     console.log(mergedData.value)
   }
