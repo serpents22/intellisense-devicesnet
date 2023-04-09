@@ -6,7 +6,7 @@
         <h1 class="title"> Data Monitoring </h1>
         <div class="card-wrapper">
           <h1 class="text-xl text-left font-semibold mb-8"> CAN Data </h1>
-          <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5 ">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 ">
             <DynamicCard v-for="card in numOfCard" :id="props.id" @close="decCard" />
             <DynamicCardDummy @click="incCard" />
           </div>

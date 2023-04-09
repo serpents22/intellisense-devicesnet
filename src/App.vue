@@ -1,16 +1,24 @@
 <template>
   <router-view/>
+  <loading :loading="loadingStore.loading"/>
 </template>
 
- <script>
-export default {
-  name: 'App',
-	watch: {
-		'$route' (to, from) {
-			document.title = to.meta.title || 'IntelliSense'
-		}
-	}
-}
+<script setup>
+import { useLoadingStore } from '@/stores/LoadingStore'
+import { watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
+const loadingStore = useLoadingStore()
+const route = useRoute()
+onMounted(() => {
+  loadingStore.stopLoading()
+})
+
+watch(() => route.params, () => {
+  loadingStore.startLoading()
+  setTimeout(() => loadingStore.stopLoading(), 1000)
+})
+
 </script>
 
 <style>

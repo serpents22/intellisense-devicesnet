@@ -38,7 +38,6 @@
   import { ref } from 'vue'
   import { storeToRefs } from 'pinia'
   import { loginSchema } from '@/composable/validationSchemas'
-import router from '@/router'
 
   const schema = loginSchema
  

@@ -27,6 +27,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from,  next) => {
+  document.title = 'Intellisense DevicesNet | Connecting Assets'
   if (to.meta.requiresAuth && !localStorage.getItem('auth.accessToken')){
     next({ name: 'Login Page'})
   } else if (to.meta.requiresAuth && localStorage.getItem('auth.accessToken') || to.meta.freeAccess){

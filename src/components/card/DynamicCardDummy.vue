@@ -13,7 +13,7 @@
   @apply 
   cursor-pointer
   border-dashed border-4 border-spacing-2
-  flex flex-col gap-4 min-w-full p-2 rounded-lg h-[177px]
+  flex flex-col gap-4 min-w-full p-2 rounded-lg h-[217px]
   items-center justify-center
   hover:border-blue-300
 }
