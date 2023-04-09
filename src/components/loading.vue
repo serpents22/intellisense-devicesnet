@@ -5,7 +5,7 @@
       class="appLoading__backdrop">
       <div class="appLoading__wrapper">
         <div class="lottie">
-          <lottie :options="lottieOptions" :width="400" :height="400" />
+          <lottie :options="lottieOptions" :width="300" :height="300" />
         </div>
       </div>
     </div>
