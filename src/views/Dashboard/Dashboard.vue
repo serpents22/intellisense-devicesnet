@@ -22,7 +22,16 @@
                 </svg>
               </div>
             </div>
-            <h1 class="text-sm text-[#353535]/60">{{device.IMEINumber}}</h1>
+            <div class="grid grid-cols-2">
+              <div class="flex flex-col gap-2">
+                <label for="batt" class="text-sm text-[#353535]/60">IMEI</label>
+                <h1 class="text-sm text-[#353535]">{{device.IMEINumber}}</h1>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label for="batt" class="text-sm text-[#353535]/60">Battery Voltage</label>
+                <h1 class="text-sm text-[#353535]">{{device.batteryVoltage}} mV</h1>
+              </div>
+            </div>
           </div>
         </div>
       </div> 
@@ -39,7 +48,6 @@ import { useDevicesStore } from '@/stores/DevicesStore'
 import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
 import router from '@/router';
- 
 
   const devicesStore = useDevicesStore()
   const realtimeDataStore = useRealtimeDataStore()
@@ -47,16 +55,22 @@ import router from '@/router';
   const { devicesStatus } = storeToRefs(useRealtimeDataStore())
   const mergedList = ref([])
   const loading = ref(false)
- 
+
   async function getDevicesList() {
     await devicesStore.loadDevices()
     await realtimeDataStore.getDevicesStatus()
-    const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-"}
+
+    const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-", batteryVoltage: "-"}
+    
+    for (let index = 0; index < devicesStatus.value.length; index++) {
+      devicesStatus.value[index].batteryVoltage =  await realtimeDataStore.getBatteryVoltage(devicesStatus.value[index].imei)
+    }
+
     mergedList.value = devicesList.value.map(device => {
       const tcpStatusData = devicesStatus.value.find(status => status.imei === device.IMEINumber) || defaultValue
+      console.log(tcpStatusData)
       return { ...device, ...tcpStatusData }
     })
-    console.log(mergedList.value)
   }
  
   onBeforeMount( async () => {
@@ -99,7 +113,7 @@ import router from '@/router';
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.25);
   @apply 
     rounded-md bg-white cursor-pointer
-    flex flex-col p-6 text-left border gap-2
+    flex flex-col p-6 text-left border gap-6
 }
 .card:hover {
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
