@@ -17,7 +17,7 @@ export const useCANDataStore = defineStore('candata', () => {
     code: null, 
   })
   
-  const getCANData = async (imei, avlParams) => {
+  const getCANDatas = async (imei, avlParams) => {
     loading.value = true
     const params = ref({ 
       imei: imei,
@@ -29,7 +29,8 @@ export const useCANDataStore = defineStore('candata', () => {
       const res = await dataAPI.getLast(params.value)
       console.log(res)
       loading.value = false
-      return res.data.AVLData[0].dataCount !== 0 ? res.data.AVLData[0].data.decodeData : 'No Data'
+      return res.data.AVLData
+      // return res.data.AVLData[0].dataCount !== 0 ? res.data.AVLData[0].data[0].AVLValue : 'No Data'
     } catch (err) {
       console.error(err)
       loading.value = false
@@ -78,6 +79,6 @@ export const useCANDataStore = defineStore('candata', () => {
     devicesCANData,
     loading,
     status,
-    getCANData,
+    getCANDatas,
   }
 })

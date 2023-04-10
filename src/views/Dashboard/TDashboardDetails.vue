@@ -83,7 +83,7 @@
 import DynamicCardDummy from '@/components/card/DynamicCardDummy.vue'
 import DynamicCard from '@/components/card/DynamicCard.vue'
 import sideNav from '@/components/navigation/sideNav.vue'
-import { ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount, onUnmounted } from 'vue';
 import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { useCANDataStore } from '@/stores/CANDataStore'
 import { storeToRefs  } from 'pinia'
@@ -98,7 +98,7 @@ const loading = ref(false)
 const canDataStore = useCANDataStore()
 const realtimeDataStore = useRealtimeDataStore()
 const { devicesGeneralData } = storeToRefs(useRealtimeDataStore())
-const numOfCard = ref([])
+const numOfCard = ref(0)
 const CANData = ref([])
 const avlParams = ref([])
 const delay = require('delay')
@@ -109,38 +109,53 @@ onBeforeMount( async () => {
   await realtimeDataStore.getGeneralData(props.id)
   console.log(devicesGeneralData.value)
   loading.value = false
-  while (whileState.value) {
-    await realtimeDataStore.getGeneralData(props.id)
-    await delay(10000)
-  }
+  // while (whileState.value) {
+  //   console.log(avlParams.value)
+  //   await realtimeDataStore.getGeneralData(props.id)
+  //   await delay(10000)
+  // }
 })
 
-// const inc = ref(-1)
+async function handleUpdateParams(index,avlID, dataID) {
+  let temp = {[avlID] : dataID}
+  avlParams.value[index] = temp
+  console.log(avlParams.value)
+  while (whileState.value) {
+    const res = await canDataStore.getCANDatas(props.id, avlParams.value)
+    CANData.value = res.map((data) => { 
+      if (typeof(data.data[0]) === 'undefined') {
+        return 'No Data'
+      }
+      return data.data[0].AVLValue
+    })
+    await delay(10000)
+  }
+}
+
+onUnmounted(() => {
+  whileState.value = false
+})
+
+
+
 
 function incCard() {
   // inc.value = inc.value + 1
   // numOfCard.value.push(`${inc.value}`)
   // console.log(numOfCard.value)
   numOfCard.value = numOfCard.value + 1
+  console.log(numOfCard.value)
 }
-function decCard() {
+function decCard(index) {
   numOfCard.value = numOfCard.value - 1
-  // console.log()
+  console.log(numOfCard.value)
   // numOfCard.value.splice(index,1)
-  // avlParams.value.splice(index,1)
+  avlParams.value.pop()
   // console.log(numOfCard.value)
 }
 
-async function handleUpdateParams(index,avlID, dataID) {
-  let temp = {[avlID] : dataID}
-  avlParams.value[index] = temp
-  CANData.value[index] = await canDataStore.getCANData(props.id, avlParams.value)
-  console.log(CANData.value)
-}
-
-  
 </script>
-  
+
 <style scoped>
 
 

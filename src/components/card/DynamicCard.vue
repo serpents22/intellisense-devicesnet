@@ -46,7 +46,7 @@
 </template>
   
 <script setup>
-import { ref, defineEmits, onUnmounted } from 'vue'
+import { ref, defineEmits, onUnmounted, computed} from 'vue'
 import Indicator from '@/components/Indicator.vue'
 
 
@@ -63,11 +63,7 @@ const props = defineProps({
   loading: {
     type: Boolean
   },
-  CANData: {
-    type: String,
-    default: '-',
-    required: true
-  }
+  CANData: null
 });
 
 const emits = defineEmits(['close','updateParams'])
@@ -80,6 +76,9 @@ function calculateValue() {
   calculatedVal.value = (props.CANData * constVal.value) + offsetVal.value
 }
 
+// const CANData = computed(() => {
+//       return props.CANData
+//     })
   
 </script> 
 
