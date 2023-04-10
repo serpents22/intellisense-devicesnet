@@ -8,10 +8,7 @@ dayjs.locale('en'); // Set the locale to English
 
 export const useCANDataStore = defineStore('candata', () => {
   
-  const CANData = ref({
-    dataID: null,
-    dataValue: null
-  })
+  const devicesCANData = ref([])
   
   const loading = ref(false)
   const status = ref({
@@ -20,31 +17,26 @@ export const useCANDataStore = defineStore('candata', () => {
     code: null, 
   })
   
-  const getCANData = async (imei, avlId, dataId) => {
+  const getCANData = async (imei, avlParams) => {
     loading.value = true
-    const params = ref({
-      imei:imei,
-      avlId:avlId,
+    const params = ref({ 
+      imei: imei,
+      avl: avlParams,
       enableDecode:true,
       maskingBit:'65535',
-      dataId: dataId
-    }) 
+    })
     try {
       const res = await dataAPI.getLast(params.value)
-      CANData.value.dataID = res.data.dataId
-      CANData.value.dataValue = res.data.data.decodedData
-      console.log(CANData.value)
+      console.log(res)
       loading.value = false
-      return res
-    } catch (err) { 
+      return res.data.AVLData[0].dataCount !== 0 ? res.data.AVLData[0].data.decodeData : 'No Data'
+    } catch (err) {
       console.error(err)
-      CANData.value.dataID = '-'
-      CANData.value.dataValue = 'No Data'
-      console.log(CANData.value)
       loading.value = false
-      return err
-    } 
+      return '-'
+    }
   }
+
 
     
   // const getCANDatas = async (imei, avlId, dataId) => {
@@ -83,7 +75,7 @@ export const useCANDataStore = defineStore('candata', () => {
   
 
   return {
-    CANData,
+    devicesCANData,
     loading,
     status,
     getCANData,

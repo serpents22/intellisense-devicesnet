@@ -22,14 +22,18 @@
                 </svg>
               </div>
             </div>
-            <div class="grid grid-cols-2">
-              <div class="flex flex-col gap-2">
-                <label for="batt" class="text-sm text-[#353535]/60">IMEI</label>
-                <h1 class="text-sm text-[#353535]">{{device.IMEINumber}}</h1>
-              </div>
-              <div class="flex flex-col gap-2">
+            <div class="flex gap-2">
+              <label for="batt" class="text-sm text-[#353535]/60">IMEI:</label>
+              <h1 class="text-sm text-[#353535]">{{device.IMEINumber}}</h1>
+            </div>
+            <div class="grid grid-cols-2 mt-2">
+              <div class="flex flex-col gap-1">
                 <label for="batt" class="text-sm text-[#353535]/60">Battery Voltage</label>
                 <h1 class="text-sm text-[#353535]">{{device.batteryVoltage}} mV</h1>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label for="batt" class="text-sm text-[#353535]/60">GSM Signal</label>
+                <h1 class="text-sm text-[#353535]">{{device.GSMSignal}}</h1>
               </div>
             </div>
           </div>
@@ -42,51 +46,53 @@
 import lazyCard from '@/components/loading/lazyCard.vue';
 import Indicator from '@/components/Indicator.vue'
 import sideNav from '@/components/navigation/sideNav.vue'
-import Button from '@/components/button/BaseButton.vue'
 import { onBeforeMount, ref, onUnmounted } from 'vue';
 import { useDevicesStore } from '@/stores/DevicesStore'
 import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
-import router from '@/router';
+import router from '@/router'
 
   const devicesStore = useDevicesStore()
   const realtimeDataStore = useRealtimeDataStore()
   const { devicesList } = storeToRefs(useDevicesStore())
-  const { devicesStatus } = storeToRefs(useRealtimeDataStore())
+  const { devicesStatus, devicesGeneralData } = storeToRefs(useRealtimeDataStore())
   const mergedList = ref([])
   const loading = ref(false)
 
   async function getDevicesList() {
-    await devicesStore.loadDevices()
     await realtimeDataStore.getDevicesStatus()
-
-    const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-", batteryVoltage: "-"}
     
     for (let index = 0; index < devicesStatus.value.length; index++) {
-      devicesStatus.value[index].batteryVoltage =  await realtimeDataStore.getBatteryVoltage(devicesStatus.value[index].imei)
-    }
+      await realtimeDataStore.getGeneralData(devicesStatus.value[index].imei)
+      devicesStatus.value[index].batteryVoltage = devicesGeneralData.value.batteryVoltage
+      devicesStatus.value[index].GSMSignal = devicesGeneralData.value.GSMSignal
+    } 
 
+    const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-", batteryVoltage: "-", GSMSignal: 0}
     mergedList.value = devicesList.value.map(device => {
       const tcpStatusData = devicesStatus.value.find(status => status.imei === device.IMEINumber) || defaultValue
-      console.log(tcpStatusData)
       return { ...device, ...tcpStatusData }
     })
+    console.log(mergedList.value, 'Fine Data')
   }
- 
+
+  const delay = require('delay')
+  const whileState = ref(true)
+
   onBeforeMount( async () => {
     loading.value = true
+    await devicesStore.loadDevices()
     await getDevicesList()
     loading.value = false
+    while (whileState.value) {
+      await getDevicesList()
+      await delay(10000)
+    }
   })
-
-  const getDevicesInterval = setInterval(getDevicesList,5000)
 
   onUnmounted(() => {
-    clearInterval(getDevicesInterval)
+    whileState.value = false
   })
-
-
-  
 
   
 </script>
@@ -113,7 +119,7 @@ import router from '@/router';
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.25);
   @apply 
     rounded-md bg-white cursor-pointer
-    flex flex-col p-6 text-left border gap-6
+    flex flex-col p-6 text-left border gap-2
 }
 .card:hover {
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);

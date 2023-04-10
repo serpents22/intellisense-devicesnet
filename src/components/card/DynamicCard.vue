@@ -31,7 +31,7 @@
         <div class="w-[6px] h-[72px] bg-[#D3E6FA] rounded-full"></div>
       <div>
           <p class="text-[#2482E6] text-[16px] font-bold text-left">Raw Data</p>
-          <p class="text-[#2482E6] text-[24px] font-bold text-left">{{ localCANData.dataValue }}</p>
+          <p class="text-[#2482E6] text-[24px] font-bold text-left">{{ props.CANData }}</p>
         </div> 
       </div>
       <div class="flex gap-2 items-center mx-4 mb-4 h-[80px]">
@@ -47,7 +47,6 @@
   
 <script setup>
 import { ref, defineEmits, onUnmounted } from 'vue'
-import dataAPI from '@/services/dataAPI'
 import Indicator from '@/components/Indicator.vue'
 
 
@@ -61,68 +60,26 @@ const props = defineProps({
     type: String,
     required: true
   },
-  index: null
+  loading: {
+    type: Boolean
+  },
+  CANData: {
+    type: String,
+    default: '-',
+    required: true
+  }
 });
 
-const emits = defineEmits(['close'])
-const loading = ref(false)
-const localCANData = ref({
-  dataID:null,
-  dataValue: '-'
-})
-  
-const getCANData = async (imei, avlId, dataId) => {
-  const params = ref({
-    imei:imei,
-    avlId:avlId,
-    enableDecode:true,
-    maskingBit:'65535',
-    dataId: dataId
-  }) 
-  try { 
-    const res = await dataAPI.getLast(params.value)
-    console.log(res)
-    localCANData.value.dataID = res.data.dataId
-    localCANData.value.dataValue = res.data.data.decodedData
-    return res
-  } catch (err) { 
-    console.error(err)
-    localCANData.value.dataID = '-'
-    localCANData.value.dataValue = 'No Data'
-    console.log(localCANData.value)
-    return err
-  } 
+const emits = defineEmits(['close','updateParams'])
+
+function getCANInterval(){
+  emits('updateParams', avlID.value,dataID.value)
 }
 
-const getCANDataInterval = ref(null)
-
-
-function getLastCANData() {
-  getCANData(props.id,avlID.value,dataID.value)
-  calculatedVal.value = (localCANData.value.dataValue * constVal.value) + offsetVal.value
-}
-
-function getCANInterval() {
-  if (dataID.value != '') {
-    loading.value = true
-    getLastCANData()
-    if (getCANDataInterval.value === null) {
-      getCANDataInterval.value = setInterval(getLastCANData, 5000)
-    }
-  } else if (dataID.value === '') {
-    loading.value = false
-    clearInterval(getCANDataInterval.value)
-    getCANDataInterval.value = null
-  }
-}
 function calculateValue() {
-  calculatedVal.value = (localCANData.value.dataValue * constVal.value) + offsetVal.value
+  calculatedVal.value = (props.CANData * constVal.value) + offsetVal.value
 }
 
-onUnmounted(() => {
-  clearInterval(getCANDataInterval.value)
-  getCANDataInterval.value = null
-})
   
 </script> 
 

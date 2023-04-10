@@ -62,7 +62,6 @@ import router from '@/router'
 import { useDevicesStore } from '@/stores/DevicesStore'
 import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
-import { computed } from '@vue/reactivity';
 
   const isModalPops = ref(false)
   const isDelModalPops = ref(false)
@@ -87,7 +86,6 @@ import { computed } from '@vue/reactivity';
   const loading = ref(false)
  
   async function getDevicesList() {
-    await devicesStore.loadDevices()
     await realtimeDataStore.getDevicesStatus()
     const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-"}
     mergedList.value = devicesList.value.map(device => {
@@ -96,18 +94,27 @@ import { computed } from '@vue/reactivity';
     })
     console.log(mergedList.value)
   }
- 
+
+  const delay = require('delay')
+  const whileState = ref(true)
+  
   onBeforeMount( async () => {
     loading.value = true
+    await devicesStore.loadDevices()
     await getDevicesList()
     loading.value = false
+    while (whileState.value) {
+      await getDevicesList()
+      await delay(10000)
+    }
   })
-
-  const getDevicesInterval = setInterval(getDevicesList,5000)
 
   onUnmounted(() => {
-    clearInterval(getDevicesInterval)
+    whileState.value = false
   })
+
+
+
   function gotoDetail(data){
     router.push({ name: 'Device Details', params: { id: data }})
   }
