@@ -109,11 +109,11 @@ onBeforeMount( async () => {
   await realtimeDataStore.getGeneralData(props.id)
   console.log(devicesGeneralData.value)
   loading.value = false
-  // while (whileState.value) {
-  //   console.log(avlParams.value)
-  //   await realtimeDataStore.getGeneralData(props.id)
-  //   await delay(10000)
-  // }
+  while (whileState.value) {
+    console.log(avlParams.value)
+    await realtimeDataStore.getGeneralData(props.id)
+    await delay(10000)
+  }
 })
 
 async function handleUpdateParams(index,avlID, dataID) {
@@ -126,7 +126,7 @@ async function handleUpdateParams(index,avlID, dataID) {
       if (typeof(data.data[0]) === 'undefined') {
         return 'No Data'
       }
-      return data.data[0].AVLValue
+      return data.data[0].decodeData
     })
     await delay(10000)
   }
