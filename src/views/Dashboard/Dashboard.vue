@@ -12,28 +12,28 @@
                 <Indicator :status="device.indicator"/>
                 <h1 class="font-medium text-lg text-[#353535]">{{device.deviceName}}</h1>
               </div>
-              <div class="signal">
-                <svg width="27" height="26" viewBox="0 0 27 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect y="20" width="3" height="6" rx="1.5" fill="#34C759"/>
-                  <rect x="6" y="15" width="3" height="11" rx="1.5" fill="#34C759"/>
-                  <rect x="12" y="10" width="3" height="16" rx="1.5" fill="#34C759"/>
-                  <rect x="18" y="5" width="3" height="21" rx="1.5" fill="#34C759"/>
-                  <rect x="24" width="3" height="26" rx="1.5" fill="#D1D1D6"/>
-                </svg>
-              </div>
+              <SignalIndicator :status="device.GSMSignal" />
             </div>
             <div class="flex gap-2">
               <label for="batt" class="text-sm text-[#353535]/60">IMEI:</label>
               <h1 class="text-sm text-[#353535]">{{device.IMEINumber}}</h1>
             </div>
-            <div class="grid grid-cols-2 mt-2">
-              <div class="flex flex-col gap-1">
-                <label for="batt" class="text-sm text-[#353535]/60">Battery Voltage</label>
-                <h1 class="text-sm text-[#353535]">{{device.batteryVoltage}} mV</h1>
+            <div class="mt-4 flex flex-col gap-2">
+              <div class="grid grid-cols-2">
+                <div class="flex flex-col gap-1">
+                  <label for="batt" class="text-sm text-[#353535]/60">Battery Voltage</label>
+                  <h1 class="text-sm text-[#353535]">{{device.batteryVoltage}} mV</h1>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label for="batt" class="text-sm text-[#353535]/60">Battery Current</label>
+                  <h1 class="text-sm text-[#353535]">{{device.batteryCurrent}} mA</h1>
+                </div>
               </div>
-              <div class="flex flex-col gap-1">
-                <label for="batt" class="text-sm text-[#353535]/60">GSM Signal</label>
-                <h1 class="text-sm text-[#353535]">{{device.GSMSignal}}</h1>
+              <div class="grid grid-cols-2">
+                <div class="flex flex-col gap-1">
+                  <label for="batt" class="text-sm text-[#353535]/60">External Voltage</label>
+                  <h1 class="text-sm text-[#353535]">{{device.externalVoltage}} mV</h1>
+                </div>
               </div>
             </div>
           </div>
@@ -51,7 +51,7 @@ import { useDevicesStore } from '@/stores/DevicesStore'
 import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
 import router from '@/router'
-
+import SignalIndicator from '@/components/SignalIndicator.vue';
   const devicesStore = useDevicesStore()
   const realtimeDataStore = useRealtimeDataStore()
   const { devicesList } = storeToRefs(useDevicesStore())
@@ -65,10 +65,12 @@ import router from '@/router'
     for (let index = 0; index < devicesStatus.value.length; index++) {
       await realtimeDataStore.getGeneralData(devicesStatus.value[index].imei)
       devicesStatus.value[index].batteryVoltage = devicesGeneralData.value.batteryVoltage
+      devicesStatus.value[index].batteryCurrent = devicesGeneralData.value.batteryCurrent
+      devicesStatus.value[index].externalVoltage = devicesGeneralData.value.externalVoltage
       devicesStatus.value[index].GSMSignal = devicesGeneralData.value.GSMSignal
     } 
 
-    const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-", batteryVoltage: "-", GSMSignal: 0}
+    const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-", batteryVoltage: "-", GSMSignal: 0,batteryCurrent: "-",externalVoltage:'-'}
     mergedList.value = devicesList.value.map(device => {
       const tcpStatusData = devicesStatus.value.find(status => status.imei === device.IMEINumber) || defaultValue
       return { ...device, ...tcpStatusData }
