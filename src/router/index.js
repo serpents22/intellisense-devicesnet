@@ -7,6 +7,7 @@ import Dashboard from '@/views/Dashboard/Dashboard.vue'
 import DashboardDetails from '@/views/Dashboard/TDashboardDetails.vue'
 import DeviceDetails from '@/views/Devices/DeviceDetails.vue'
 import ResetPassword from '@/views/Auth/ResetPassword.vue'
+import MainMap from '@/views/Map/MainMap.vue'
 import NotFound from '@/views/error/NotFound.vue'
 
 const routes = [
@@ -17,6 +18,7 @@ const routes = [
   
   { path: '/devices', name: 'Devices List', component: DevicesList, meta: { requiresAuth:true }},
   { path: '/devices/details/:id', name: 'Device Details', component: DeviceDetails, props: true, meta: { requiresAuth:true }},
+  { path: '/geolocation', name: 'MainMap', component: MainMap, meta: { requiresAuth:true } },
 
   { path: '/:catchALL(.*)', name: 'NotFound', component: NotFound },
 ]
