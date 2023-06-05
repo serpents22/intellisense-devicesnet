@@ -40,7 +40,7 @@ watch(() => route.params, () => {
   color: #2c3e50;
   height: 100vh;
   display: flex;
-  padding: 60px 32px 60px 60px;
+  padding: 60px 0px 60px 60px;
 }
 
 body {
