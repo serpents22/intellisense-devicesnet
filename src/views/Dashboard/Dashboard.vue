@@ -34,6 +34,16 @@
                   <label for="batt" class="text-sm text-[#353535]/60">External Voltage</label>
                   <h1 class="text-sm text-[#353535]">{{device.externalVoltage}} mV</h1>
                 </div>
+                <div class="flex flex-col gap-1">
+                  <label for="batt" class="text-sm text-[#353535]/60">Satellites Number</label>
+                  <h1 class="text-sm text-[#353535]">{{device.satellites}}</h1>
+                </div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="flex flex-col gap-1">
+                  <label for="batt" class="text-sm text-[#353535]/60">GNSS Status</label>
+                  <h1 class="text-sm text-[#353535]">{{device.GNSSStatus}}</h1>
+                </div>
               </div>
             </div>
           </div>
@@ -68,6 +78,8 @@ import SignalIndicator from '@/components/SignalIndicator.vue';
       devicesStatus.value[index].batteryCurrent = devicesGeneralData.value.batteryCurrent
       devicesStatus.value[index].externalVoltage = devicesGeneralData.value.externalVoltage
       devicesStatus.value[index].GSMSignal = devicesGeneralData.value.GSMSignal
+      devicesStatus.value[index].satellites = devicesGeneralData.value.satellites
+      devicesStatus.value[index].GNSSStatus = devicesGeneralData.value.GNSSStatus
     } 
 
     const defaultValue = { IPAddress: "-",imei: "-",indicator: 0,lastHandshake: "-",port: "-",status: "OFFLINE",_measurement: "-",_time: "-", batteryVoltage: "-", GSMSignal: 0,batteryCurrent: "-",externalVoltage:'-'}
