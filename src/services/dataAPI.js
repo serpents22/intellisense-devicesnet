@@ -32,4 +32,12 @@ export default {
   getDeviceStatus(imei) {
     return apiClient.get(`data-device/tcp/${imei}`) 
   },
+
+  getLastDeviceGeo(params) {
+    return apiClient.get(`data-device/geolocation/last`,{ params })
+  },
+
+  getHistoryDeviceGeo(params) {
+    return apiClient.get(`data-device/geolocation/history`,{ params }) 
+  },
 }
