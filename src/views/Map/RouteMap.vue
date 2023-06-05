@@ -83,9 +83,9 @@ function addMarkersToMap(data) {
     marker.setStyle(
       new Style({
         image: new Circle({
-          radius: 6,
+          radius: 2,
           fill: new Fill({ color: 'red' }),
-          stroke: new Stroke({ color: 'white', width: 2 }),
+          stroke: new Stroke({ color: 'white', width: 1 }),
         }),
       })
     )
