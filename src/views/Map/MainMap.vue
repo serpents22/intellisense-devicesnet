@@ -11,31 +11,27 @@
     import Tab from '@/components/tab/Tab.vue';
     import sideNav from '@/components/navigation/sideNav.vue'
     import RealtimeMap from '@/views/Map/RealtimeMap.vue'
-    import HeatMap from '@/views/Map/HeatMap.vue'
+    import RouteMap from '@/views/Map/RouteMap.vue'
     import { onMounted, ref} from 'vue'
 
     export default {
       components:{
         RealtimeMap,
-        HeatMap,
+        RouteMap,
         Tab,
-        sideNav
+        sideNav 
     },
 
     setup() {
       const selectedComponent = ref('RealtimeMap')
       const tabs = [
         {
-          title: 'Crowd Zone',
-          value: 'HeatMap'
-        },        
-        {
           title: 'Realtime Tracking',
           value: 'RealtimeMap'
         },
         {
           title: 'Route Tracking',
-          value: 'HeatMap'
+          value: 'RouteMap'
         }
       ]
  
