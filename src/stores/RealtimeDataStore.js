@@ -18,7 +18,7 @@ export const useRealtimeDataStore = defineStore('realtimedata', () => {
     message: null,
     code: null,
   })
-  const generalParams = [{ '21': '0' }, { 22: '0' }, { 24: '0' }, { 66: '0' }, { 67: '0' }, { 68: '0' }, { 71: '0' }, { 181: '0' }, { 182: '0' }, { 200: '0' }, { 239: '0' }, { 240: '0' }, { 194: '0' }]
+  const generalParams = [{ '21': '0' }, { 22: '0' }, { 24: '0' }, { 66: '0' }, { 67: '0' }, { 68: '0' }, { 69: '0' }, { 71: '0' }, { 181: '0' }, { 182: '0' }, { 200: '0' }, { 239: '0' }, { 240: '0' }, { 194: '0' }]
 
   const getLastData = async (imei, avlId) => {
     try {
@@ -46,15 +46,34 @@ export const useRealtimeDataStore = defineStore('realtimedata', () => {
     devicesGeneralData.value.externalVoltage = res.data.AVLData.find(element => element.AVLId === '66').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '66').data[0].AVLValue
     devicesGeneralData.value.batteryVoltage = res.data.AVLData.find(element => element.AVLId === '67').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '67').data[0].AVLValue
     devicesGeneralData.value.batteryCurrent = res.data.AVLData.find(element => element.AVLId === '68').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '68').data[0].AVLValue
-    devicesGeneralData.value.GNSSStatus = res.data.AVLData.find(element => element.AVLId === '71').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '71').data[0].AVLValue
+    // devicesGeneralData.value.GNSSStatus = res.data.AVLData.find(element => element.AVLId === '69').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '69').data[0].AVLValue
+    if (res.data.AVLData.find(element => element.AVLId === '69').dataCount == 0) {
+      devicesGeneralData.value.GNSSStatus = '-'
+    } else {
+      if (res.data.AVLData.find(element => element.AVLId === '69').data[0].AVLValue == '0') {
+        devicesGeneralData.value.GNSSStatus = 'OFF'
+      }
+      if (res.data.AVLData.find(element => element.AVLId === '69').data[0].AVLValue == '1') {
+        devicesGeneralData.value.GNSSStatus = 'ON, FIX'
+      }
+      if (res.data.AVLData.find(element => element.AVLId === '69').data[0].AVLValue == '2') {
+        devicesGeneralData.value.GNSSStatus = 'ON, NOT FIX'
+      }
+      if (res.data.AVLData.find(element => element.AVLId === '69').data[0].AVLValue == '3') {
+        devicesGeneralData.value.GNSSStatus = 'SLEEP'
+      }
+    }
+
     devicesGeneralData.value.GNSSPDOP = res.data.AVLData.find(element => element.AVLId === '181').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '181').data[0].AVLValue
     devicesGeneralData.value.GNSSHDOP = res.data.AVLData.find(element => element.AVLId === '182').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '182').data[0].AVLValue
     devicesGeneralData.value.sleepMode = res.data.AVLData.find(element => element.AVLId === '200').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '200').data[0].AVLValue
     devicesGeneralData.value.ignition = res.data.AVLData.find(element => element.AVLId === '239').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '239').data[0].AVLValue
     devicesGeneralData.value.movement = res.data.AVLData.find(element => element.AVLId === '240').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '240').data[0].AVLValue
+    devicesGeneralData.value.satellites = res.data.AVLData.find(element => element.AVLId === '21').dataCount === 0 ? '-' : res.data.AVLData.find(element => element.AVLId === '21').data[0].satellites
     devicesGeneralData.value.timestamp = res.data.AVLData.find(element => element.AVLId === '194').dataCount === 0 ? '-' : new Date(res.data.AVLData.find(element => element.AVLId === '194').data[0].AVLValue *1000)
   }
   
+
   const getGSMSignal = async (imei) => {
     const res = await getLastData(imei, [{ 21:'0' }])
     return res.data.AVLData[0].dataCount === 0 ? '-' : res.data.AVLData[0].data.ioValue
@@ -112,6 +131,7 @@ export const useRealtimeDataStore = defineStore('realtimedata', () => {
     loading.value = true
     try {
       const res = await dataAPI.getDevicesStatus()
+      console.log(res.data)
       devicesStatus.value = res.data
       devicesStatus.value.map((data) => {
         data.lastHandshake = dayjs(data._time).format('M/D/YY [at] h:mmA')
@@ -127,7 +147,6 @@ export const useRealtimeDataStore = defineStore('realtimedata', () => {
             break;
         }
       })
-
       loading.value = false
     } catch (err) {
       console.error(err)
