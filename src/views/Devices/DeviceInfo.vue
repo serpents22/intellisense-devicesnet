@@ -62,33 +62,45 @@ import Indicator from '@/components/Indicator.vue'
 import { useRealtimeDataStore } from '@/stores/RealtimeDataStore'
 import { storeToRefs } from 'pinia'
 import { useDevicesStore } from '@/stores/DevicesStore'
-import { ref, onUnmounted, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onUnmounted, onBeforeMount } from 'vue';
 
-  const route = useRoute()
-  
+  const props = defineProps({
+  id: {
+    type: String,
+    required: true
+  }
+});
   const realtimeDataStore = useRealtimeDataStore()
   const { deviceStatus } = storeToRefs(useRealtimeDataStore())
   const devicesStore = useDevicesStore()
   const { deviceData } = storeToRefs(useDevicesStore())
 
-  const mergedData = ref({})
+  const mergedData = ref({}) 
 
   async function getDevicesList() {
-    await realtimeDataStore.getDeviceStatus(route.params.id)
-    await devicesStore.loadDevice(route.params.id)
+    await realtimeDataStore.getDeviceStatus(props.id)
     mergedData.value = Object.assign({}, deviceData.value, deviceStatus.value);
     console.log(mergedData.value)
   }
 
-  const getDevicesInterval = setInterval(getDevicesList,5000)
-    
-  onMounted( async () => {
-    getDevicesList()
-  })
+
+  const delay = require('delay')
+  const whileState = ref(true)
+  const loading = ref(false)
+  
+  onBeforeMount( async () => {
+  loading.value = true
+  await devicesStore.loadDevice(props.id)
+  await getDevicesList()
+  loading.value = false
+  while (whileState.value) {
+    await getDevicesList() 
+    await delay(10000)
+  }
+})
 
   onUnmounted( async () => {
-    clearInterval(getDevicesInterval)
+    whileState.value = false
   })
 
 
