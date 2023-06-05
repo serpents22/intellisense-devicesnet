@@ -11,7 +11,7 @@
   </template>
   
   <script setup>
-  import { defineProps, watchEffect } from 'vue';
+  import { watchEffect } from 'vue';
   
   const props = defineProps({
     status: Number,
